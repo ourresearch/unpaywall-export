@@ -32,11 +32,7 @@ All the tasks of creating users and granting permissions are done in the AWS Man
 
  As an account `unpaywall` administrator goto to IAM -> Policies -> Create Policy:
 
-<<<<<<< HEAD
 ![IAM%20Management%20Console%20-%20Create Policy 1](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM%20Management%20Console%20-%20Create%20Policy%201.png)
-=======
-![IAM Management Console - Create Policy 1](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM Management Console - Create Policy 1.png)
->>>>>>> 4068afa24de0d62d3577ee560b13e8f7309732da
 
 Add the following statements:
 
@@ -69,11 +65,7 @@ Add the following statements:
 }
 ```
 
-<<<<<<< HEAD
 ![IAM%20Management%20Console%20-%20Create Policy 2](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM%20Management%20Console%20-%20Create%20Policy%202.png)
-=======
-![IAM Management Console - Create Policy 2](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM Management Console - Create Policy 2.png)
->>>>>>> 4068afa24de0d62d3577ee560b13e8f7309732da
 
 Review and create policy. When you need to update buckets or rights just go and edit the policy.
 
@@ -83,43 +75,25 @@ Review and create policy. When you need to update buckets or rights just go and 
 
  As an account `unpaywall` administrator goto to IAM -> Roles -> Create Role:
 
-<<<<<<< HEAD
 ![IAM%20Management%20Console%20-%20Create Role 1](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM%20Management%20Console%20-%20Create%20Role%201.png)
 
 Add the client account id:
 ![IAM%20Management%20Console%20-%20Create Role 2](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM%20Management%20Console%20-%20Create%20Role%202.png)
-=======
-![IAM Management Console - Create Role 1](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM Management Console - Create Role 1.png)
-
-Add the client account id:
-![IAM Management Console - Create Role 2](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM Management Console - Create Role 2.png)
->>>>>>> 4068afa24de0d62d3577ee560b13e8f7309732da
 
 This is required only when creating the role. When we need to add another account we will edit the role policy
 
 Attach the policy to allow access to S3:
-<<<<<<< HEAD
 ![IAM%20Management%20Console%20-%20Create Role 4](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM%20Management%20Console%20-%20Create%20Role%204.png)
 
 Create the role:
 ![IAM%20Management%20Console%20-%20Create Role 4](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM%20Management%20Console%20-%20Create%20Role%204.png)
-=======
-![IAM Management Console - Create Role 4](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM Management Console - Create Role 4.png)
-
-Create the role:
-![IAM Management Console - Create Role 4](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM Management Console - Create Role 4.png)
->>>>>>> 4068afa24de0d62d3577ee560b13e8f7309732da
 
 
 ### Adding other client accounts
 
 To add another accounts to trust relation, an account `unpaywall` administrator should goto to IAM -> Roles:
 
-<<<<<<< HEAD
 ![IAM%20Management%20Console%20-%20Edit Role 1](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM%20Management%20Console%20-%20Edit%20Role%201.png)
-=======
-![IAM Management Console - Edit Role 1](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM Management Console - Edit Role 1.png)
->>>>>>> 4068afa24de0d62d3577ee560b13e8f7309732da
 
 Edit trust relationship and add as many accounts as needed, then update the trust policy:
 
@@ -150,11 +124,7 @@ Edit trust relationship and add as many accounts as needed, then update the trus
 ```
 Using this format will allow minimal documentation of permissions granted
 
-<<<<<<< HEAD
 ![IAM%20Management%20Console%20-%20Edit Role 2](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM%20Management%20Console%20-%20Edit%20Role%20.png)
-=======
-![IAM Management Console - Edit Role 2](https://github.com/Impactstory/unpaywall-export/blob/master/imgs/IAM Management Console - Edit Role 2.png)
->>>>>>> 4068afa24de0d62d3577ee560b13e8f7309732da
 
 
 ### Account `client` administrator tasks
