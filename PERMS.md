@@ -4,14 +4,9 @@
     1. Please keep in mind distinction between `account` - the organization and `user` - the individual
     2. Our `export` account (named `unpaywall` in the following document) is an account created to hold the export buckets only, no other resources are allocated here.
 
-1. [Clients new to AWS](#permissions-for-clients-new-to-aws):  Set up a new user in our export account and add user to relevant group to allow reading from specific bucket.
+1. [Clients with existing AWS account](#permissions-for-clients-with-existing-aws-accounts): Grant cross-account permission to their account to read from specific bucket.
+2. [Clients new to AWS](#permissions-for-clients-new-to-aws):  Set up a new user in our export account and add user to relevant group to allow reading from specific bucket.
 
-2. [Clients with existing AWS account](#permissions-for-clients-with-existing-aws-accounts): Grant cross-account permission to their account to read from specific bucket.
-
-
-## Permissions for clients new to AWS
-
-TODO
 
 ## Permissions for clients with existing AWS accounts
 
@@ -167,3 +162,11 @@ Or they can follow the steps bellow:
 5. Choose **Switch Role**. Now, all actions that you perform are done with the permissions granted to the role that you switched to. You no longer have the permissions associated with your original IAM user until you switch back.
 
 6. When you are done performing actions that require the permissions of the role, you can switch back to your normal IAM user by choosing the role name in the upper-right corner (whatever you specified as the **Display Name**), and then choosing **Back to UserName**.
+
+
+
+## Permissions for clients new to AWS
+
+For clients new to AWS we will create a new user in our `export` account  -named `unpaywall` here. We will create a dedicated group `AccessToExportBuckets`, attached exiting `AccessToExportBucket` and add new users to this group.
+
+
