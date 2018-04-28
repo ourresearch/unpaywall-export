@@ -60,9 +60,8 @@ if [[ $PSQL_EXIT_CODE -ne 0 ]] ; then
     exit 2
 fi
 
-logger "Using filename already given"
-FILENAME="unpaywall_snapshot_2018-03-29T113154.jsonl"
-
+# logger "Using filename already given"
+# FILENAME="unpaywall_snapshot_2018-03-29T113154.jsonl"
 
 logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
 
