@@ -23,14 +23,14 @@ logger() {
     echo "$(date --utc +'%Y-%m-%d %H:%M:%S') : $1"
 }
 
-if [[ "DATABASE_URL" == "" ]]; then
+if [[ "$DATABASE_URL" == "" ]]; then
     echo "Missing DATABASE_URL environment variable"
     usage
     exit 1
 fi
 
 # set default values for destination buckets if none provided
-if [[ "S3_SNAPSHOT_BUCKET" == "" ]]; then
+if [[ "$S3_SNAPSHOT_BUCKET" == "" ]]; then
     S3_SNAPSHOT_BUCKET="unpaywall-data-snapshots"
 fi
 
@@ -51,7 +51,7 @@ logger "Process  : $PROCESS"
 logger "Filename : $FILENAME"
 
 ## temporarily comment this out and use existing filename instead
-logger "Exporting view to file"
+logger "Exporting database column to file"
 /usr/bin/psql "${DATABASE_URL}?ssl=true" -c "\copy (select response_jsonb from pub) to '${FILENAME}';"
 PSQL_EXIT_CODE=$?
 
