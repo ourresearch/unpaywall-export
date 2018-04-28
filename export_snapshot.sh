@@ -36,9 +36,9 @@ fi
 
 
 if [[ "$AWS_PROFILE_EXPORT" != "" ]]; then
-    $AWS_CP_CMD="/usr/bin/aws s3 cp --profile=$AWS_PROFILE_EXPORT "
+    AWS_CP_CMD="/usr/bin/aws s3 cp --profile=$AWS_PROFILE_EXPORT "
 else
-    $AWS_CP_CMD="/usr/bin/aws s3 cp "
+    AWS_CP_CMD="/usr/bin/aws s3 cp "
 fi
 
 TODAY_FOR_FILE=$(date --utc +'%Y-%m-%dT%H%M%S' )
