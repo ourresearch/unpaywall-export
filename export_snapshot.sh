@@ -41,7 +41,7 @@ else
     $AWS_CP_CMD="/usr/bin/aws s3 cp "
 fi
 
-TODAY_FOR_FILE=$(date --utc +'%Y-%m-%d %H%M%S' )
+TODAY_FOR_FILE=$(date --utc +'%Y-%m-%dT%H%M%S' )
 
 PROCESS="export_snapshot"
 BUCKET="$S3_SNAPSHOT_BUCKET"
