@@ -68,9 +68,9 @@ export_file() {
     fi
 
     if [ "$2" == 'csv' ] ; then
-        FILENAME = "${FILENAME}.csv"
+        FILENAME="${FILENAME}.csv"
     else
-        FILENAME = "${FILENAME}.jsonl"
+        FILENAME="${FILENAME}.jsonl"
     fi
 
     logger "Process  : $PROCESS"
