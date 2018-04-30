@@ -79,8 +79,8 @@ export_file() {
         logger "Error ${PSQL_EXIT_CODE} while running psql"
         exit 2
     fi
-    logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes
-    logger "wc on $FILENAME: "$(wc -l """$FILENAME""") lines"
+    logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
+    logger "wc on $FILENAME: $(wc -l """$FILENAME""") lines"
 
     if [ "$2" == 'json' ] ; then
         logger "Cleaning, fixing bad characters"
