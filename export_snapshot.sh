@@ -7,12 +7,12 @@
 usage() {
     echo "
 Usage: $0
-Export from database to S3
+Export a whole snapshot from database to S3
 
 The following environmental variables are required:
 
 DATABASE_URL     connection string for database
-S3_SNAPSHOT_BUCKET      destination S3 bucket name 'unpaywall-data-snapshots'
+S3_SNAPSHOT_BUCKET      destination S3 bucket name, default 'unpaywall-data-snapshots'
 
 Requires a properly configured aws cli to allow S3 upload.
 
@@ -20,7 +20,7 @@ Requires a properly configured aws cli to allow S3 upload.
 }
 
 logger() {
-    echo "$(date --utc +'%Y-%m-%d %H:%M:%S') : $1"
+    echo "$(date --utc +'%Y-%m-%dT%H:%M:%S') : $1"
 }
 
 if [[ "$DATABASE_URL" == "" ]]; then
@@ -50,7 +50,6 @@ FILENAME="unpaywall_snapshot_${TODAY_FOR_FILE}.jsonl"
 logger "Process  : $PROCESS"
 logger "Filename : $FILENAME"
 
-## temporarily comment this out and use existing filename instead
 logger "Exporting database column to file"
 /usr/bin/psql "${DATABASE_URL}?ssl=true" -c "\copy (select response_jsonb from pub) to '${FILENAME}';"
 PSQL_EXIT_CODE=$?
@@ -60,6 +59,7 @@ if [[ $PSQL_EXIT_CODE -ne 0 ]] ; then
     exit 2
 fi
 
+# this is sometimes used for debugging, comment the above out when you do it
 # logger "Using filename already given"
 # FILENAME="unpaywall_snapshot_2018-03-29T113154.jsonl"
 
