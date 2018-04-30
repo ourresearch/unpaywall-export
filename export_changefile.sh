@@ -51,15 +51,6 @@ TODAY_FOR_FILE=$(date --utc +'%Y-%m-%dT%H%M%S' )
 LAST_WEEK_FOR_VIEW=$(date --utc --date '9 day ago' +'%Y-%m-%dT%H:%M:%S')
 LAST_WEEK_FOR_FILE=$(date --utc --date '9 day ago' +'%Y-%m-%dT%H%M%S')
 
-# export no version
-export_file export_no_versions csv
-export_file export_no_versions json
-
-# export with versions
-export_file export_with_versions csv
-export_file export_with_versions json
-
-
 
 # function
 function export_file {
@@ -128,6 +119,13 @@ function export_file {
         exit 5
     fi
     logger "Done"
-
 }
+
+# export no version
+export_file export_no_versions csv
+export_file export_no_versions json
+
+# export with versions
+export_file export_with_versions csv
+export_file export_with_versions json
 
