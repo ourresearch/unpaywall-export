@@ -53,7 +53,7 @@ LAST_WEEK_FOR_FILE=$(date --utc --date '9 day ago' +'%Y-%m-%dT%H%M%S')
 
 
 # function
-function export_file {
+export_file() {
 
     if [[$1 == "export_no_versions"]] ; then
         PROCESS="export_no_versions"
@@ -71,17 +71,18 @@ function export_file {
         FILENAME = "${FILENAME}.csv"
     else
         FILENAME = "${FILENAME}.jsonl"
+    fi
 
     logger "Process  : $PROCESS"
     logger "Filename : $FILENAME"
 
     if [[$2 == "csv"]] ; then
         logger "Exporting view to file csv"
-        /usr/bin/psql "${PSQL_CONNECT_STRING}?ssl=true" -c "\copy (select * from ${CSV_VIEW} where last_changed_date >= '${LAST_WEEK_FOR_VIEW}'::timestamp and updated > '1043-01-01'::timestamp) to '${FILENAME}' WITH (FORMAT CSV, HEADER);"
+        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select * from ${CSV_VIEW} where last_changed_date >= '${LAST_WEEK_FOR_VIEW}'::timestamp and updated > '1043-01-01'::timestamp) to '${FILENAME}' WITH (FORMAT CSV, HEADER);"
         PSQL_EXIT_CODE=$?
     else
         logger "Exporting view to file json"
-        /usr/bin/psql "${PSQL_CONNECT_STRING}?ssl=true" -c "\copy (select response_jsonb from pub where last_changed_date >= '${LAST_WEEK_FOR_VIEW}'::timestamp and updated > '1043-01-01'::timestamp) to '${FILENAME}';"
+        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select response_jsonb from pub where last_changed_date >= '${LAST_WEEK_FOR_VIEW}'::timestamp and updated > '1043-01-01'::timestamp) to '${FILENAME}';"
         PSQL_EXIT_CODE=$?
     fi
 
