@@ -55,7 +55,7 @@ LAST_WEEK_FOR_FILE=$(date --utc --date '9 day ago' +'%Y-%m-%dT%H%M%S')
 # function
 export_file() {
 
-    if [[$1 == 'export_no_versions']] ; then
+    if [$1 == 'export_no_versions'] ; then
         PROCESS="export_no_versions"
         BUCKET="$S3_NO_VERSIONS"
         FILENAME="changed_dois_${LAST_WEEK_FOR_FILE}_to_${TODAY_FOR_FILE}"
@@ -67,7 +67,7 @@ export_file() {
         CSV_VIEW="export_main_changed_with_versions"
     fi
 
-    if [[$2 == 'csv']] ; then
+    if [$2 == 'csv'] ; then
         FILENAME = "${FILENAME}.csv"
     else
         FILENAME = "${FILENAME}.jsonl"
@@ -76,7 +76,7 @@ export_file() {
     logger "Process  : $PROCESS"
     logger "Filename : $FILENAME"
 
-    if [[$2 == 'csv']] ; then
+    if [$2 == 'csv'] ; then
         logger "Exporting view to file csv"
         /usr/bin/psql "${DATABASE_URL}" -c "\copy (select * from ${CSV_VIEW} where last_changed_date >= '${LAST_WEEK_FOR_VIEW}'::timestamp and updated > '1043-01-01'::timestamp) to '${FILENAME}' WITH (FORMAT CSV, HEADER);"
         PSQL_EXIT_CODE=$?
@@ -92,13 +92,13 @@ export_file() {
     fi
     logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
 
-    if [[$2 == 'json']] ; then
+    if [$2 == 'json'] ; then
         logger "Cleaning, fixing bad characters"
         sed -i 's/\\\\/\\/g' "$FILENAME"
         sed -i 's/\n\n/\n/g' "$FILENAME"
     fi
 
-    if [[$1 == 'export_no_versions']] ; then
+    if [$1 == 'export_no_versions'] ; then
         logger "Cleaning, removing versions"
         sed -i 's/"publishedVersion"/null/g; s/"submittedVersion"/null/g; s/"acceptedVersion"/null/g' "$FILENAME"
     fi
