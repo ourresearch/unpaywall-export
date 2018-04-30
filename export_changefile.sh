@@ -62,7 +62,7 @@ export_file export_with_versions json
 
 
 # function
-export_file () {
+function export_file {
 
     if [[$1 == "export_no_versions"]] ; then
         PROCESS="export_no_versions"
