@@ -15,8 +15,6 @@ Export a weekly changefule from database to S3
 The following environmental variables are required:
 
 DATABASE_URL     connection string for database
-S3_CHANGEFILE_BUCKET      destination S3 bucket name, default 'unpaywall-data-feed'
-S3_CLARIVATE_BUCKET       destination S3 bucket name, default 'oadoi-for-clarivate'
 Requires a properly configured aws cli to allow S3 upload.
 
 "
@@ -31,15 +29,6 @@ if [[ "$DATABASE_URL" == "" ]]; then
     usage
     exit 1
 fi
-
-# set default values for destination buckets if none provided
-if [[ "S3_CHANGEFILE_BUCKET" == "" ]]; then
-    S3_CHANGEFILE_BUCKET="unpaywall-data-feed"
-fi
-if [[ "S3_CLARIVATE_BUCKET" == "" ]]; then
-    S3_CLARIVATE_BUCKET="oadoi-for-clarivate"
-fi
-
 
 if [[ "$AWS_PROFILE_EXPORT" != "" ]]; then
     AWS_CP_CMD="/usr/bin/aws s3 cp --profile=$AWS_PROFILE_EXPORT "
@@ -57,12 +46,12 @@ export_file() {
 
     if [ "$1" == 'export_no_versions' ] ; then
         PROCESS="export_no_versions"
-        BUCKET="$S3_NO_VERSIONS"
+        BUCKET="unpaywall-data-feed"
         FILENAME="changed_dois_${LAST_WEEK_FOR_FILE}_to_${TODAY_FOR_FILE}"
         CSV_VIEW="export_main_changed_no_versions"
     else
         PROCESS="export_with_versions"
-        BUCKET="$S3_WITH_VERSIONS"
+        BUCKET="oadoi-for-clarivate"
         FILENAME="changed_dois_with_versions_${LAST_WEEK_FOR_FILE}_to_${TODAY_FOR_FILE}"
         CSV_VIEW="export_main_changed_with_versions"
     fi
