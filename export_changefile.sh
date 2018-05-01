@@ -80,7 +80,7 @@ export_file() {
         exit 2
     fi
     logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
-    logger "wc on $FILENAME: $(wc -l """$FILENAME""") lines"
+    logger "wc on $FILENAME: $(wc -l < """$FILENAME""") lines"
 
     if [ "$2" == 'json' ] ; then
         logger "Cleaning, fixing bad characters"
@@ -103,7 +103,9 @@ export_file() {
     logger "Created archive $FILENAME.gz: $(stat -c%s """$FILENAME.gz""") bytes"
 
     logger "Uploading export"
-    $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz"
+    UPDATED=$(date --utc +'%Y-%m-%dT%H:%M:%S.%f')
+    LINES=$(wc -l < $"""$FILENAME""")
+    $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz" "--metadata """lines='$LINES'""" --metadata """updated='$UPDATED'""" "
     S3CP_EXIT_CODE=$?
     if [[ $S3CP_EXIT_CODE -ne 0 ]] ; then
         logger "Error ${S3CP_EXIT_CODE} while uploading export"
