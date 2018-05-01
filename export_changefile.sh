@@ -105,7 +105,11 @@ export_file() {
     logger "Uploading export"
     UPDATED=$(date --utc +'%Y-%m-%dT%H:%M:%S')
     LINES=$(wc -l < $"""$FILENAME""")
-    $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz" --metadata """lines=$LINES,updated='$UPDATED'"""
+    if [ "$1" == 'export_no_versions' ] ; then
+        $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz" --metadata """lines=$LINES,updated='$UPDATED'"""
+    else
+        $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz" --acl public-read --metadata """lines=$LINES,updated='$UPDATED'"""
+    fi
     S3CP_EXIT_CODE=$?
     if [[ $S3CP_EXIT_CODE -ne 0 ]] ; then
         logger "Error ${S3CP_EXIT_CODE} while uploading export"
@@ -122,5 +126,4 @@ export_file export_no_versions json
 
 # export with versions
 export_file export_with_versions csv
-export_file export_with_versions json
 
