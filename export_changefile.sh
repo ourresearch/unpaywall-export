@@ -103,9 +103,9 @@ export_file() {
     logger "Created archive $FILENAME.gz: $(stat -c%s """$FILENAME.gz""") bytes"
 
     logger "Uploading export"
-    UPDATED=$(date --utc +'%Y-%m-%dT%H:%M:%S.%f')
+    UPDATED=$(date --utc +'%Y-%m-%dT%H:%M:%S')
     LINES=$(wc -l < $"""$FILENAME""")
-    $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz" "--metadata """lines='$LINES'""" --metadata """updated='$UPDATED'""" "
+    $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz" --metadata """lines=$LINES,updated='$UPDATED'"""
     S3CP_EXIT_CODE=$?
     if [[ $S3CP_EXIT_CODE -ne 0 ]] ; then
         logger "Error ${S3CP_EXIT_CODE} while uploading export"
