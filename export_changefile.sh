@@ -126,4 +126,5 @@ export_file export_no_versions json
 
 # export with versions
 export_file export_with_versions csv
+export_file export_with_versions json
 
