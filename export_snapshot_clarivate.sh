@@ -36,8 +36,8 @@ fi
 
 TODAY_FOR_FILE=$(date --utc +'%Y-%m-%dT%H%M%S' )
 
-PROCESS="export_snapshot"
-FILENAME="unpaywall_snapshot_${TODAY_FOR_FILE}.jsonl"
+PROCESS="export_snapshot_for_clarivate"
+FILENAME="unpaywall_snapshot_${TODAY_FOR_FILE}_with_versions.jsonl"
 
 logger "Process  : $PROCESS"
 logger "Filename : $FILENAME"
@@ -51,20 +51,13 @@ if [[ $PSQL_EXIT_CODE -ne 0 ]] ; then
     exit 2
 fi
 
-# this is sometimes used for debugging, comment the above out when you do it
-# logger "Using filename already given"
-# FILENAME="unpaywall_snapshot_2018-03-29T113154.jsonl"
-
 logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
 
 logger "Cleaning, fixing bad characters"
 sed -i 's/\\\\/\\/g' "$FILENAME"
 sed -i 's/\n\n/\n/g' "$FILENAME"
 
-logger "Cleaning, removing versions from main file"
-sed -i 's/"publishedVersion"/null/g; s/"submittedVersion"/null/g; s/"acceptedVersion"/null/g' "$FILENAME"
-
-logger "Compressing main file"
+logger "Compressing clarivate version"
 /bin/gzip -9 -c "$FILENAME" > "$FILENAME.gz"
 GZIP_EXIT_CODE=$?
 if [[ $GZIP_EXIT_CODE -ne 0 ]] ; then
@@ -73,13 +66,13 @@ if [[ $GZIP_EXIT_CODE -ne 0 ]] ; then
 fi
 logger "Created archive $FILENAME.gz: $(stat -c%s """$FILENAME.gz""") bytes"
 
-logger "Uploading snapshot to main place"
-$AWS_CP_CMD "$FILENAME.gz" "s3://unpaywall-data-snapshots/$FILENAME.gz" --acl public-read
+
+logger "Uploading snapshot to clarivate place"
+$AWS_CP_CMD "$FILENAME.gz" "s3://oadoi-for-clarivate/$FILENAME.gz" --acl public-read
 S3CP_EXIT_CODE=$?
 if [[ $S3CP_EXIT_CODE -ne 0 ]] ; then
     logger "Error ${S3CP_EXIT_CODE} while uploading export"
     exit 5
 fi
-
 logger "Done"
 
