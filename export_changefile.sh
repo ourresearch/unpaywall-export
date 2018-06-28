@@ -109,6 +109,6 @@ export_file() {
 }
 
 # export no version
-export_file export csv
 export_file export json
+export_file export csv
 
