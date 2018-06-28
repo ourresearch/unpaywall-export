@@ -44,17 +44,10 @@ LAST_WEEK_FOR_FILE=$(date --utc --date '9 day ago' +'%Y-%m-%dT%H%M%S')
 # function
 export_file() {
 
-    if [ "$1" == 'export_no_versions' ] ; then
-        PROCESS="export_no_versions"
-        BUCKET="unpaywall-data-feed"
-        FILENAME="changed_dois_${LAST_WEEK_FOR_FILE}_to_${TODAY_FOR_FILE}"
-        CSV_VIEW="export_main_changed_no_versions"
-    else
-        PROCESS="export_with_versions"
-        BUCKET="oadoi-for-clarivate"
-        FILENAME="changed_dois_with_versions_${LAST_WEEK_FOR_FILE}_to_${TODAY_FOR_FILE}"
-        CSV_VIEW="export_main_changed_with_versions"
-    fi
+    PROCESS="export_with_versions"
+    BUCKET="unpaywall-data-feed"
+    FILENAME="changed_dois_with_versions_${LAST_WEEK_FOR_FILE}_to_${TODAY_FOR_FILE}"
+    CSV_VIEW="export_main_changed_with_versions"
 
     if [ "$2" == 'csv' ] ; then
         FILENAME="${FILENAME}.csv"
@@ -116,10 +109,6 @@ export_file() {
 }
 
 # export no version
-export_file export_no_versions csv
-export_file export_no_versions json
-
-# export with versions
-export_file export_with_versions csv
-export_file export_with_versions json
+export_file export csv
+export_file export json
 
