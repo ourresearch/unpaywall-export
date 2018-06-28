@@ -84,13 +84,8 @@ export_file() {
 
     if [ "$2" == 'json' ] ; then
         logger "Cleaning, fixing bad characters"
-        sed -i 's/\\\\/\\/g' "$FILENAME"
-        sed -i 's/\n\n/\n/g' "$FILENAME"
-    fi
-
-    if [ "$1" == 'export_no_versions' ] ; then
-        logger "Cleaning, removing versions"
-        sed -i 's/"publishedVersion"/null/g; s/"submittedVersion"/null/g; s/"acceptedVersion"/null/g' "$FILENAME"
+        tr '\\\\' '\\' < "$FILENAME" > "$FILENAME"
+        tr '\n\n' '\n' < "$FILENAME" > "$FILENAME"
     fi
 
     logger "Compressing"
