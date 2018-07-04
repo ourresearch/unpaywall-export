@@ -3,7 +3,7 @@
 #
 # Bash script to export weekly changefiles of unpaywall data
 #
-# Export from 'export_main_changed_with_versions' or 'export_main_no_versions' view to files in S3.
+# Export from 'export_main_changed_with_versions' view to files in S3.
 # All the data that has been changed in the last week
 #
 
@@ -93,11 +93,7 @@ export_file() {
     logger "Uploading export"
     UPDATED=$(date --utc +'%Y-%m-%dT%H:%M:%S')
     LINES=$(wc -l < $"""$FILENAME""")
-    if [ "$1" == 'export_no_versions' ] ; then
-        $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz" --metadata """lines=$LINES,updated='$UPDATED'"""
-    else
-        $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz" --acl public-read --metadata """lines=$LINES,updated='$UPDATED'"""
-    fi
+    $AWS_CP_CMD "$FILENAME.gz" "s3://$BUCKET/$FILENAME.gz" --metadata """lines=$LINES,updated='$UPDATED'"""
     S3CP_EXIT_CODE=$?
     if [[ $S3CP_EXIT_CODE -ne 0 ]] ; then
         logger "Error ${S3CP_EXIT_CODE} while uploading export"
@@ -108,7 +104,7 @@ export_file() {
     logger ""
 }
 
-# export no version
+# export with version
 export_file export json
 export_file export csv
 
