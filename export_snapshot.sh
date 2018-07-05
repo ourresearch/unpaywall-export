@@ -58,8 +58,7 @@ fi
 logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
 
 logger "Cleaning, fixing bad characters"
-tr -s '\\' < "$FILENAME" > "$FILENAME"
-tr -s '\n' < "$FILENAME" > "$FILENAME"
+sed -i '/^\s*$/d' "$FILENAME"
 
 logger "Compressing main file"
 /bin/gzip -9 -c "$FILENAME" > "$FILENAME.gz"
