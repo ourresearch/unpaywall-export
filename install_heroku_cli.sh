@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# workaround for needed path below
+PATH=$PATH:/usr/local/bin:.
+export PATH
+
 # from https://toolbelt.heroku.com/install.sh
 
 {
