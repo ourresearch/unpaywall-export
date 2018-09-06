@@ -78,6 +78,7 @@ export_file() {
     if [ "$2" == 'json' ] ; then
         logger "Cleaning, fixing bad characters"
         sed -i '/^\s*$/d' "$FILENAME"
+        sed -i 's:\\":\":g' "$FILENAME"
     fi
 
     logger "Compressing"
