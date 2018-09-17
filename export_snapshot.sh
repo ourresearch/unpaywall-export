@@ -59,7 +59,7 @@ logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
 
 logger "Cleaning, fixing bad characters"
 sed -i '/^\s*$/d' "$FILENAME"
-sed -i 's:\\":\":g' "$FILENAME"
+sed -i 's:\\:\:g' "$FILENAME"
 
 logger "Compressing main file"
 /bin/gzip -9 -c "$FILENAME" > "$FILENAME.gz"
