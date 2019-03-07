@@ -60,11 +60,11 @@ export_file() {
 
     if [ "$2" == 'csv' ] ; then
         logger "Exporting view to file csv"
-        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select * from ${CSV_VIEW} where last_changed_date >= '${LAST_WEEK_FOR_VIEW}'::timestamp and updated > '1043-01-01'::timestamp) to '${FILENAME}' WITH (FORMAT CSV, HEADER);"
+        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select * from ${CSV_VIEW} where last_changed_date between '${LAST_WEEK_FOR_VIEW}'::timestamp and now() and updated > '1043-01-01'::timestamp) to '${FILENAME}' WITH (FORMAT CSV, HEADER);"
         PSQL_EXIT_CODE=$?
     else
         logger "Exporting view to file json"
-        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select response_jsonb from pub where response_jsonb is not null and last_changed_date >= '${LAST_WEEK_FOR_VIEW}'::timestamp and updated > '1043-01-01'::timestamp) to '${FILENAME}';"
+        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select response_jsonb from pub where response_jsonb is not null and last_changed_date between '${LAST_WEEK_FOR_VIEW}'::timestamp and now() and updated > '1043-01-01'::timestamp) to '${FILENAME}';"
         PSQL_EXIT_CODE=$?
     fi
 
