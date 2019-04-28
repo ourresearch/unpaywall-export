@@ -9,5 +9,5 @@ csv_fields=\
 "First calendar year journal provided online Open Access content,"\
 "Journal license"
 
-curl -s https://doaj.org/csv |
+curl -s -L https://doaj.org/csv |
 csvtool namedcol "$csv_fields" -
