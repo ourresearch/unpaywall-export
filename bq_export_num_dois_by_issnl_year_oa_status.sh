@@ -46,6 +46,13 @@ gsutil rm $gcs_csv
 
 # upsert article counts and delete missing keys
 
+csv_lines=$(wc -l $local_csv | cut -f1 -d' ')
+
+if [ $csv_lines -lt "1000000" ]; then
+    echo "expected at least 1M lines in num_dois_by_issnl_year_oa_status.csv but got $csv_lines. quitting."
+    exit 1
+fi
+
 echo updating pg journal table
 
 psql $DATABASE_URL <<SQL
