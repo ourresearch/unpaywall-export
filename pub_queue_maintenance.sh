@@ -25,7 +25,6 @@ heroku ps:scale refresh=0 --app=articlepage
 heroku ps:scale green_scrape=0 --app=oadoi
 heroku ps:scale run_pdf_url_check=0 --app=articlepage
 
-heroku pg:killall --app=oadoi
 psql $DATABASE_URL -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE state = 'idle in transaction'";
 
 (
