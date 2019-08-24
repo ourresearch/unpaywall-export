@@ -83,6 +83,7 @@ select
   cast(json_extract_scalar(data, '$.journal_is_oa') as bool) as journal_is_oa,
   cast(json_extract_scalar(data, '$.journal_is_in_doaj') as bool) as journal_is_in_doaj,
   json_extract_scalar(data, '$.journal_issns') as journal_issns,
+  json_extract_scalar(data, '$.journal_issn_l') as journal_issn_l,
   json_extract_scalar(data, '$.journal_name') as journal_name,
   json_extract_scalar(data, '$.publisher') as publisher,
   cast(replace(json_extract(data, '$.published_date'), '"', '') as date) as published_date,

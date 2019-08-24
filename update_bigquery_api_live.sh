@@ -67,7 +67,7 @@ logger "insert updated rows from $EXTRACTED_STAGING_TABLE to live table $LIVE_TA
 bq --headless --quiet query --use_legacy_sql=false "\
     insert into $LIVE_TABLE (\
         doi, doi_url, is_oa, oa_status, best_oa_location, oa_locations, data_standard, title, year, journal_is_oa, journal_is_in_doaj, \
-        journal_issns, journal_name, publisher, published_date, updated, genre, z_authors, json_data \
+        journal_issns, journal_issn_l, journal_name, publisher, published_date, updated, genre, z_authors, json_data \
     ) select * from $EXTRACTED_STAGING_TABLE;"
 require_success $? 7 'bq'
 
