@@ -29,7 +29,7 @@ psql $DATABASE_URL -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WH
 
 (
     psql $DATABASE_URL -c "update pub_queue set started = null where started is not null"
-    psql $DATABASE_URL -c "vacuum full verbose analyze pub_queue"
+    psql $DATABASE_URL -c "vacuum verbose analyze pub_queue"
 ) & update_vac=$!
 
 (
@@ -41,13 +41,13 @@ psql $DATABASE_URL -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WH
 
 (
     psql $DATABASE_URL -c "update page_green_scrape_queue set started = null where started is not null"
-    psql $DATABASE_URL -c "vacuum full verbose analyze page_green_scrape_queue"
+    psql $DATABASE_URL -c "vacuum verbose analyze page_green_scrape_queue"
     heroku ps:scale green_scrape=$GREEN_SCRAPE_WORKERS --app=oadoi
 ) & green_scrape_vac=$!
 
 (
     psql $DATABASE_URL -c "update pdf_url_check_queue set started = null where started is not null"
-    psql $DATABASE_URL -c "vacuum full verbose analyze pdf_url_check_queue"
+    psql $DATABASE_URL -c "vacuum verbose analyze pdf_url_check_queue"
     heroku ps:scale run_pdf_url_check=$PDF_CHECK_WORKERS --app=articlepage
 ) & pdf_check_vac=$!
 
