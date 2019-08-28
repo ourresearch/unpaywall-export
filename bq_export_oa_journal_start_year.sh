@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# populates the postgres num_dois_by_issnl_year_oa_status table using bigquery
+# populates the postgres journal_oa_start_year view and dependencies using bigquery
 
 set -e
 
@@ -53,7 +53,7 @@ if [ $csv_lines -lt "1000000" ]; then
     exit 1
 fi
 
-echo updating pg journal table
+echo updating pg num_dois_by_journal_year_status
 
 psql $DATABASE_URL <<SQL
 create temp table tmp_num_dois_by_journal_year_status as (select * from num_dois_by_journal_year_status limit 0);
@@ -73,4 +73,5 @@ delete from num_dois_by_journal_year_status where (issn_l, year, oa_status) not 
 );
 
 refresh materialized view oa_rates_by_journal_year;
+refresh materialized view journal_oa_start_year;
 SQL
