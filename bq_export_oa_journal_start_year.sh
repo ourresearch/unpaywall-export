@@ -68,8 +68,12 @@ insert into num_dois_by_journal_year_status (
     set num_dois = excluded.num_dois
 ;
 
-delete from num_dois_by_journal_year_status where (issn_l, year, oa_status) not in (
-    select issn_l, year, oa_status from tmp_num_dois_by_journal_year_status
+delete from num_dois_by_journal_year_status n where not exists (
+    select 1 from tmp_num_dois_by_journal_year_status t
+    where
+        t.issn_l = n.issn_l and
+        t.year = n.year and
+        t.oa_status = n.oa_status
 );
 
 refresh materialized view oa_rates_by_journal_year;
