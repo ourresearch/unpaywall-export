@@ -29,3 +29,14 @@ psql $DATABASE_URL -c "\
             (select count(1) from pub_queue where finished > now() - '2 hours'::interval and started is null) as updated, \
             (select count(1) from pub where last_changed_date > now() - '2 hours'::interval) as changed \
     );"
+
+psql $DATABASE_URL -c "\
+    insert into pdf_validity ( \
+        select \
+            now() as time, \
+            count(1) as num_urls, \
+            sum(case when is_pdf then 1 else 0 end) as num_valid_pdfs, \
+            sum(case when http_status is not null then 1 else 0 end) as num_responses, \
+            sum(case when http_status = 200 then 1 else 0 end) as num_200 \
+        from pdf_url \
+    );"
