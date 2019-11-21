@@ -74,3 +74,6 @@ require_success $? 7 'bq'
 logger "delete extracted staging table $EXTRACTED_STAGING_TABLE"
 bq --headless --quiet rm -f $EXTRACTED_STAGING_TABLE
 require_success $? 8 'bq'
+
+logger "delete local changefile $FILENAME"
+rm $FILENAME
