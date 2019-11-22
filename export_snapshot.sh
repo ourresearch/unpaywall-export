@@ -57,12 +57,9 @@ fi
 
 logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
 
-logger "Cleaning, fixing bad characters"
-sed -i '/^\s*$/d' "$FILENAME"
-sed -i 's:\\\\:\\:g' "$FILENAME"
+logger "Cleaning, fixing bad characters, and compressing"
+sed '/^\s*$/d' "$FILENAME" | sed 's:\\\\:\\:g' | /bin/gzip -9 -c - > "$FILENAME.gz"
 
-logger "Compressing main file"
-/bin/gzip -9 -c "$FILENAME" > "$FILENAME.gz"
 GZIP_EXIT_CODE=$?
 if [[ $GZIP_EXIT_CODE -ne 0 ]] ; then
     logger "Error ${GZIP_EXIT_CODE} while running gzip"
