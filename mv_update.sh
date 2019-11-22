@@ -37,6 +37,8 @@ psql $DATABASE_URL -c "\
             count(1) as num_urls, \
             sum(case when is_pdf then 1 else 0 end) as num_valid_pdfs, \
             sum(case when http_status is not null then 1 else 0 end) as num_responses, \
-            sum(case when http_status = 200 then 1 else 0 end) as num_200 \
+            sum(case when http_status = 200 then 1 else 0 end) as num_200, \
+            sum(case when is_pdf is null then 1 else 0 end) as num_unchecked_pdfs, \
+            sum(case when not is_pdf then 1 else 0 end) as num_invalid_pdfs \
         from pdf_url \
     );"
