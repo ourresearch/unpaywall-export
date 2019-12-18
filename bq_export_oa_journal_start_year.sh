@@ -16,7 +16,7 @@ bq query \
     --use_legacy_sql=false \
     --destination_table=$bq_temp_table \
     --max_rows=0 \
-    "select issn_l, year, case when best_oa_location.evidence = 'oa journal (via observed oa rate)' then 'observed_gold' else oa_status end as oa_status, count(1) as num_dois from unpaywall.api_live left join journals.our_doi_to_issnl using (doi) where published_date < date_sub(current_date(), interval 1 month) group by 1, 2, 3;"
+    'select issn_l, year, oa_status, count(1) as num_dois from unpaywall.api_live left join journals.our_doi_to_issnl using (doi) where published_date < date_sub(current_date(), interval 1 month) group by 1, 2, 3;'
 
 # extract the mapping file to CSV and delete the temp table
 
