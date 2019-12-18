@@ -33,7 +33,7 @@ MIN_CHANGED=$(date --utc --date '2 days ago' +'%Y-%m-%dT%H:%M:%S')
 
 logger "Export changes since $MIN_CHANGED to $FILENAME"
 
-/usr/bin/psql "${DATABASE_URL}" -c "\copy (select response_jsonb from pub where response_jsonb is not null and last_changed_date between '$MIN_CHANGED'::timestamp and now() and updated > '1043-01-01'::timestamp) to '${FILENAME}';"
+/usr/bin/psql "${DATABASE_URL}" -c "\copy (select response_jsonb from pub where response_jsonb is not null and updated between '$MIN_CHANGED'::timestamp and now() and updated > '1043-01-01'::timestamp) to '${FILENAME}';"
 require_success $? 2 'psql'
 
 logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
