@@ -56,6 +56,8 @@ fi
 echo updating pg num_dois_by_journal_year_status
 
 psql $DATABASE_URL <<SQL
+begin;
+
 create temp table tmp_num_dois_by_journal_year_status as (select * from num_dois_by_journal_year_status limit 0);
 
 \\copy tmp_num_dois_by_journal_year_status from $local_csv csv header
@@ -76,6 +78,27 @@ delete from num_dois_by_journal_year_status n where not exists (
         t.oa_status = n.oa_status
 );
 
+
 refresh materialized view oa_rates_by_journal_year;
+
+create temp table old_journal_oa_start_year as (select * from journal_oa_start_year);
+
 refresh materialized view journal_oa_start_year;
+
+insert into logs.oa_journal_updates (select now(), 'XXXX-XXXX', null, null);
+
+insert into logs.oa_journal_updates (
+    select
+        now() as update_time,
+        issn_l,
+        old.oa_year as old_oa_year,
+        new.oa_year as new_oa_year
+    from
+        old_journal_oa_start_year old
+        full outer join journal_oa_start_year new using (issn_l)
+    where
+        old.oa_year is distinct from new.oa_year
+);
+
+commit;
 SQL
