@@ -5,6 +5,8 @@ echo "refresh materialized views for metrics";
 . $HOME/.bash_profile;
 . $HOME/.bashrc;
 
+./logging/log-license-rates.sh
+
 psql $DATABASE_URL < log-green-scrape-stats.sql
 psql $DATABASE_URL < logging/changefile-size.sql
 psql $DATABASE_URL -c "refresh materialized view pub_refresh_priority_histo_mv";
