@@ -11,7 +11,7 @@ insert into logs.green_scrape (
         scrape_updated > now() - interval '2 hours'
 );
 
-update logs.green_scrape set error_rate = errors_per_hour::real / pages_scraped_per_hour where time = now();
+update logs.green_scrape set error_rate = errors_per_hour::real / greatest(pages_scraped_per_hour, 1) where time = now();
 
 insert into logs.green_scrape_by_endpoint (
     select * from (
@@ -29,6 +29,6 @@ insert into logs.green_scrape_by_endpoint (
     where errors_per_hour > 0
 );
 
-update logs.green_scrape_by_endpoint set error_rate = errors_per_hour::real / pages_scraped_per_hour where time = now();
+update logs.green_scrape_by_endpoint set error_rate = errors_per_hour::real / greatest(pages_scraped_per_hour, 1) where time = now();
 
 commit;
