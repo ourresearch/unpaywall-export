@@ -15,13 +15,15 @@ alias heroku="/usr/local/bin/heroku"
 # check we have the needed heroku
 heroku --version
 
-UPDATE_WORKERS=$(heroku ps -a oadoi update | grep '^update' | wc -l)
-REFRESH_WORKERS=$(heroku ps -a articlepage refresh | grep '^refresh' | wc -l)
-GREEN_SCRAPE_WORKERS=$(heroku ps -a oadoi green_scrape | grep '^green_scrape' | wc -l)
-PDF_CHECK_WORKERS=$(heroku ps -a articlepage run_pdf_url_check | grep '^run_pdf_url_check' | wc -l)
+UPDATE_WORKERS=$(heroku ps -a oadoi update | grep '^update\.' | wc -l)
+REFRESH_WORKERS=$(heroku ps -a articlepage refresh | grep '^refresh\.' | wc -l)
+REFRESH_AUX_WORKERS=$(heroku ps -a articlepage refresh_aux | grep '^refresh_aux\.' | wc -l)
+GREEN_SCRAPE_WORKERS=$(heroku ps -a oadoi green_scrape | grep '^green_scrape\.' | wc -l)
+PDF_CHECK_WORKERS=$(heroku ps -a articlepage run_pdf_url_check | grep '^run_pdf_url_check\.' | wc -l)
 
 heroku ps:scale update=0 --app=oadoi
 heroku ps:scale refresh=0 --app=articlepage
+heroku ps:scale refresh_aux=0 --app=articlepage
 heroku ps:scale green_scrape=0 --app=oadoi
 heroku ps:scale run_pdf_url_check=0 --app=articlepage
 
@@ -34,8 +36,11 @@ psql $DATABASE_URL -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WH
 
 (
     psql $DATABASE_URL -c "update pub_refresh_queue set started = null where started is not null"
+    psql $DATABASE_URL -c "update pub_refresh_queue_aux set started = null where started is not null"
     psql $DATABASE_URL -c "vacuum verbose analyze pub_refresh_queue"
+    psql $DATABASE_URL -c "vacuum verbose analyze pub_refresh_queue_aux"
     heroku ps:scale refresh=$REFRESH_WORKERS --app=articlepage
+    heroku ps:scale refresh_aux=$REFRESH_AUX_WORKERS --app=articlepage
 ) & refresh_vac=$!
 
 
