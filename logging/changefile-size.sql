@@ -1,8 +1,7 @@
 begin;
 
-
 create temp table tmp_export_time as (
-    select export_time from (
+    select min(export_time) as export_time from (
         select
             day at time zone 'UTC' + interval '8 hours' as export_time
         from
@@ -24,7 +23,7 @@ insert into logs.next_data_feed_size (
     select
         now(),
         :export_time as next_export,
-        count(1) as num_dois
+        count(*) as num_dois
     from pub
     where
         last_changed_date between :export_time::timestamp without time zone - '9 days'::interval and :export_time::timestamp without time zone
