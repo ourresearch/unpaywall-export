@@ -7,6 +7,7 @@ echo "refresh materialized views for metrics";
 
 ./logging/log-license-rates.sh
 ./logging/log-version-rates.sh
+./logging/log-crawlera-stats.sh
 
 psql $DATABASE_URL < log-green-scrape-stats.sql
 psql $DATABASE_URL < logging/changefile-size.sql
