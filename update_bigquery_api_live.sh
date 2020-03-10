@@ -71,9 +71,21 @@ bq --headless --quiet query --use_legacy_sql=false "\
     ) select * from $EXTRACTED_STAGING_TABLE;"
 require_success $? 7 'bq'
 
+HISTORY_TABLE="unpaywall.api_history"
+logger "delete duplicate rows from history table $HISTORY_TABLE"
+bq --headless --quiet query --use_legacy_sql=false "delete from $HISTORY_TABLE where (doi, updated) in (select (doi, updated) from $EXTRACTED_STAGING_TABLE);"
+require_success $? 8 'bq'
+
+logger "insert updated rows from $EXTRACTED_STAGING_TABLE to history table $HISTORY_TABLE"
+bq --headless --quiet query --use_legacy_sql=false "\
+    insert into $HISTORY_TABLE (doi, updated, record) (\
+        select doi, updated, (select as struct * from unnest([updates])) as record from $EXTRACTED_STAGING_TABLE updates
+    )"
+require_success $? 9 'bq'
+
 logger "delete extracted staging table $EXTRACTED_STAGING_TABLE"
 bq --headless --quiet rm -f $EXTRACTED_STAGING_TABLE
-require_success $? 8 'bq'
+require_success $? 10 'bq'
 
 logger "delete local changefile $FILENAME"
 rm $FILENAME
