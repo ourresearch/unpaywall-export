@@ -97,6 +97,7 @@ export_file() {
 }
 
 logger "extracting possible changes for export"
+
 /usr/bin/psql "${DATABASE_URL}" <<SQL
     begin;
 
@@ -115,6 +116,8 @@ SQL
 
 export_file export json
 export_file export csv
+
+logger "updating last-exported dates"
 
 /usr/bin/psql "${DATABASE_URL}" <<SQL
     insert into $DAILY_EXPORT_HISTORY (id, last_exported_update) (
