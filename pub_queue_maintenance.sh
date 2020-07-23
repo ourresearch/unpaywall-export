@@ -59,5 +59,3 @@ psql $DATABASE_URL -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WH
 wait $update_vac $refresh_vac $green_scrape_vac $pdf_check_vac
 
 heroku ps:scale update=$UPDATE_WORKERS --app=oadoi
-
-psql $DATABASE_URL -c "vacuum verbose analyze pub"
