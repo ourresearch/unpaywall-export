@@ -108,3 +108,4 @@ export_file() {
 export_file export json
 export_file export csv
 
+/usr/local/bin/heroku run -a oadoi python cache_changefile_dicts.py

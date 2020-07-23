@@ -126,3 +126,5 @@ logger "updating last-exported dates"
 
     truncate $JSON_STAGING_TABLE;
 SQL
+
+/usr/local/bin/heroku run -a oadoi python cache_changefile_dicts.py
