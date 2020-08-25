@@ -1,7 +1,5 @@
 \set ON_ERROR_STOP on
 
-begin;
-
 create temp table old_doaj as (
     select issn, e_issn, year from doaj_journals
 );
@@ -17,8 +15,12 @@ create temp table doaj_csv (
 
 \copy doaj_csv (title, alt_title, issn, e_issn, year, license) from program 'bash get-doaj-csv.sh' csv header null as ''
 
-delete from doaj_journals;
+begin;
+
+truncate doaj_journals;
 insert into doaj_journals (select * from doaj_csv);
+
+commit;
 
 insert into logs.doaj_updates (select now(), 'XXXX-XXXX', null, null);
 
@@ -49,5 +51,3 @@ insert into logs.doaj_updates (
         e_issn is not null
         and old.year is distinct from new.year
 );
-
-commit;
