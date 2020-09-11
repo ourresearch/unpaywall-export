@@ -66,9 +66,11 @@ require_success $? 6 'bq'
 logger "insert updated rows from $EXTRACTED_STAGING_TABLE to live table $LIVE_TABLE"
 bq --headless --quiet query --use_legacy_sql=false "\
     insert into $LIVE_TABLE (\
-        doi, doi_url, is_oa, oa_status, best_oa_location, oa_locations, data_standard, title, year, journal_is_oa, journal_is_in_doaj, \
+        doi, doi_url, is_oa, oa_status, best_oa_location, first_oa_location, oa_locations, data_standard, title, year, journal_is_oa, journal_is_in_doaj, \
         journal_issns, journal_issn_l, journal_name, publisher, published_date, updated, genre, z_authors, json_data \
-    ) select * from $EXTRACTED_STAGING_TABLE;"
+    ) select doi, doi_url, is_oa, oa_status, best_oa_location, first_oa_location, oa_locations, data_standard, title, year, journal_is_oa, journal_is_in_doaj, \
+        journal_issns, journal_issn_l, journal_name, publisher, published_date, updated, genre, z_authors, json_data \
+    from $EXTRACTED_STAGING_TABLE;"
 require_success $? 7 'bq'
 
 HISTORY_TABLE="unpaywall.api_history"
@@ -79,8 +81,10 @@ require_success $? 8 'bq'
 logger "insert updated rows from $EXTRACTED_STAGING_TABLE to history table $HISTORY_TABLE"
 bq --headless --quiet query --use_legacy_sql=false "\
     insert into $HISTORY_TABLE (doi, updated, record) (\
-        select doi, updated, (select as struct * from unnest([updates])) as record from $EXTRACTED_STAGING_TABLE updates
-    )"
+        select doi, updated, (select as struct  doi, doi_url, is_oa, oa_status, best_oa_location, oa_locations, data_standard, title, year, journal_is_oa, journal_is_in_doaj, \
+        journal_issns, journal_issn_l, journal_name, publisher, published_date, updated, genre, z_authors, json_data, first_oa_location \
+     from unnest([updates])) as record from $EXTRACTED_STAGING_TABLE updates \
+    );"
 require_success $? 9 'bq'
 
 logger "delete extracted staging table $EXTRACTED_STAGING_TABLE"

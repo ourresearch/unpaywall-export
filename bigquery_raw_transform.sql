@@ -14,7 +14,8 @@ create temp function extract_oa_location(json string) AS (
         json_extract_scalar(json, '$.host_type') as host_type,
         cast(json_extract_scalar(json, '$.is_best') as bool) as is_best,
         json_extract_scalar(json, '$.pmh_id') as pmh_id,
-        json_extract_scalar(json, '$.endpoint_id') as endpoint_id
+        json_extract_scalar(json, '$.endpoint_id') as endpoint_id,
+        cast(json_extract_scalar(json, '$.oa_date') as date) as oa_date
       )
       end as oa_location
   )
@@ -76,6 +77,7 @@ select
   cast(json_extract_scalar(data, '$.is_oa') as bool) as is_oa,
   json_extract_scalar(data, '$.oa_status') as oa_status,
   extract_oa_location(json_extract(data, '$.best_oa_location')) as best_oa_location,
+  extract_oa_location(json_extract(data, '$.first_oa_location')) as first_oa_location,
   extract_oa_locations(json_extract(data, "$.oa_locations")) as oa_locations,
   cast(json_extract_scalar(data, '$.data_standard') as INT64) as data_standard,
   json_extract_scalar(data, '$.title') as title,
