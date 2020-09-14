@@ -44,14 +44,14 @@ gsutil rm $gcs_csv
 
 # upsert counts
 
-echo updating pg logs.num_articles_by_time_oa_status
+echo updating pg logs.license_proportion_by_time;
 
 psql $DATABASE_URL <<SQL
 create temp table tmp_proportion_of_dois_with_license (proportion_of_dois_with_license real);
 
 \\copy tmp_proportion_of_dois_with_license from $local_csv csv header
 
-insert into logs.num_articles_by_time_oa_status (
+insert into logs.license_proportion_by_time (
     select now(), proportion_of_dois_with_license from tmp_proportion_of_dois_with_license
 );
 SQL
