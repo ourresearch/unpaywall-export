@@ -37,7 +37,7 @@ commit;
 
 begin;
 
-create temp table tmp_publisher_scrape_24_hr as (
+create temp table tmp_publisher_scrape_72_hr as (
     select * from (
         select
             now() as time,
@@ -53,14 +53,14 @@ create temp table tmp_publisher_scrape_24_hr as (
             response_jsonb->>'oa_status' as oa_status,
             count(*) as num_articles
         from pub
-        where scrape_updated > now() - interval '24 hours'
+        where scrape_updated > now() - interval '72 hours'
         and response_jsonb->>'oa_status' is not null
         group by 1, 2, 3
     ) x where publisher != 'other'
 );
 
 insert into logs.hybrid_scrape_oa_status_by_publisher (time, publisher, interval, oa_status, count) (
-    select time, publisher, interval '24 hours', oa_status, num_articles from tmp_publisher_scrape_24_hr
+    select time, publisher, interval '72 hours', oa_status, num_articles from tmp_publisher_scrape_72_hr
 );
 
 commit;
