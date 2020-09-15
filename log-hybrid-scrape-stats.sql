@@ -34,3 +34,33 @@ insert into logs.hybrid_scrape_oa_status (
 );
 
 commit;
+
+begin;
+
+create temp table tmp_publisher_scrape_24_hr as (
+    select * from (
+        select
+            now() as time,
+            case
+                when response_jsonb->>'publisher' ~* '\yelsevier\y' then 'Elsevier'
+                when response_jsonb->>'publisher' ~* '\ywiley\y' then 'Wiley'
+                when response_jsonb->>'publisher' ~* '\yspringer\y' then 'Springer'
+                when response_jsonb->>'publisher' ~* '\yinforma\y' or (response_jsonb->>'publisher' ~*'\ytaylor\y' and response_jsonb->>'publisher' ~ '\yfrancis\y') then 'Taylor & Francis'
+                when response_jsonb->>'publisher' ~* '\yoxford university press\y' then 'OUP'
+                when response_jsonb->>'publisher' ~* '\ysage publication' then 'SAGE'
+                else 'other'
+            end as publisher,
+            response_jsonb->>'oa_status' as oa_status,
+            count(*) as num_articles
+        from pub
+        where scrape_updated > now() - interval '24 hours'
+        and response_jsonb->>'oa_status' is not null
+        group by 1, 2, 3
+    ) x where publisher != 'other'
+);
+
+insert into logs.hybrid_scrape_oa_status_by_publisher (time, publisher, interval, oa_status, count) (
+    select time, publisher, interval '24 hours', oa_status, num_articles from tmp_publisher_scrape_24_hr
+);
+
+commit;

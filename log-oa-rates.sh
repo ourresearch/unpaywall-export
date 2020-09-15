@@ -8,7 +8,7 @@ set -e
 
 echo extracting view to temp table
 
-bq_temp_table="unpaywall.tmp_acrticles_by_oa_status_$RANDOM"
+bq_temp_table="unpaywall.tmp_articles_by_oa_status_$RANDOM"
 
 bq query \
     --headless --quiet \
