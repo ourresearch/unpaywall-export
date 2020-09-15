@@ -20,6 +20,7 @@ select * from (
             when regexp_contains(publisher, r'(?i)\\bspringer\\b') then 'Springer'
             when regexp_contains(publisher, r'(?i)\\binforma\\b') or (regexp_contains(publisher, r'(?i)\\btaylor\\b') and regexp_contains(publisher, r'(?i)\\bfrancis\\b')) then 'Taylor & Francis'
             when regexp_contains(publisher, r'(?i)\\boxford university press\\b') then 'OUP'
+            when regexp_contains(publisher, r'(?i)\\bsage publication') then 'SAGE'
             else null
         end as publisher,
         oa_status,
