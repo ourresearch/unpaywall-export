@@ -37,30 +37,52 @@ commit;
 
 begin;
 
-create temp table tmp_publisher_scrape_72_hr as (
-    select * from (
+create temp table tmp_publisher_scrape_intervals as (
+    with recent_pubs as materialized (
         select
-            now() as time,
-            case
-                when response_jsonb->>'publisher' ~* '\yelsevier\y' then 'Elsevier'
-                when response_jsonb->>'publisher' ~* '\ywiley\y' then 'Wiley'
-                when response_jsonb->>'publisher' ~* '\yspringer\y' then 'Springer'
-                when response_jsonb->>'publisher' ~* '\yinforma\y' or (response_jsonb->>'publisher' ~*'\ytaylor\y' and response_jsonb->>'publisher' ~ '\yfrancis\y') then 'Taylor & Francis'
-                when response_jsonb->>'publisher' ~* '\yoxford university press\y' then 'OUP'
-                when response_jsonb->>'publisher' ~* '\ysage publication' then 'SAGE'
-                else 'other'
-            end as publisher,
-            response_jsonb->>'oa_status' as oa_status,
-            count(*) as num_articles
+            scrape_updated,
+            response_jsonb->>'publisher' as publisher,
+            response_jsonb->>'oa_status' as oa_status
         from pub
-        where scrape_updated > now() - interval '72 hours'
-        and response_jsonb->>'oa_status' is not null
-        group by 1, 2, 3
-    ) x where publisher != 'other'
+        where scrape_updated > now() - interval '2 weeks'
+    )
+    select
+        now() as time,
+        interval,
+        publisher,
+        oa_status,
+        sum(case when scrape_updated > now() - interval then 1 else 0 end) as num_articles
+    from (
+        select * from (
+            select
+                scrape_updated,
+                case
+                    when publisher ~* '\yelsevier\y' then 'Elsevier'
+                    when publisher ~* '\ywiley\y' then 'Wiley'
+                    when publisher ~* '\yspringer\y' then 'Springer'
+                    when publisher ~* '\yinforma\y' or (publisher ~*'\ytaylor\y' and publisher ~ '\yfrancis\y') then 'Taylor & Francis'
+                    when publisher ~* '\yoxford university press\y' then 'OUP'
+                    when publisher ~* '\ysage publication' then 'SAGE'
+                    else 'other'
+                end as publisher,
+                oa_status
+            from recent_pubs
+        ) assigned_pubs where publisher != 'other' and oa_status is not null
+    ) filtered_pubs
+    cross join (
+        select interval '1 day' as interval
+        union
+        select interval '3 days'
+        union
+        select interval '1 week'
+        union
+        select interval '2 weeks'
+    ) intervals
+    group by 1, 2, 3, 4
 );
 
 insert into logs.hybrid_scrape_oa_status_by_publisher (time, publisher, interval, oa_status, count) (
-    select time, publisher, interval '72 hours', oa_status, num_articles from tmp_publisher_scrape_72_hr
+    select time, publisher, interval, oa_status, num_articles from tmp_publisher_scrape_intervals
 );
 
 commit;
