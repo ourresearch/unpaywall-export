@@ -6,7 +6,6 @@ csv_fields=\
 "Alternative title,"\
 "Journal ISSN (print version),"\
 "Journal EISSN (online version),"\
-"First calendar year journal provided online Open Access content,"\
 "Journal license"
 
 curl -s -L https://doaj.org/csv |
