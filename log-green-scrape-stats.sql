@@ -4,7 +4,7 @@ insert into logs.green_scrape (
     select
         now() as time ,
         count(1)::real / 8 as pages_scraped_per_hour,
-        sum(case when error is not null and error != '' then 1 else 0 end)::real / 8 as errors_per_hour
+        sum(case when error is not null and error != '' and error not like '%status_code=403%' then 1 else 0 end)::real / 8 as errors_per_hour
     from
         page_new
     where
