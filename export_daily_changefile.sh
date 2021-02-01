@@ -34,31 +34,18 @@ else
 fi
 
 JSON_STAGING_TABLE=daily_export_staging
-CSV_STAGING_VIEW=daily_export_csv_view
 DAILY_EXPORT_HISTORY=daily_export_dates
 TODAY_FOR_FILE=$(date --utc +'%Y-%m-%dT%H%M%S' )
 
 export_file() {
     BUCKET="unpaywall-daily-data-feed"
-    FILENAME="changed_dois_with_versions_${TODAY_FOR_FILE}"
-
-    if [ "$2" == 'csv' ] ; then
-        FILENAME="${FILENAME}.csv"
-    else
-        FILENAME="${FILENAME}.jsonl"
-    fi
+    FILENAME="changed_dois_with_versions_${TODAY_FOR_FILE}.jsonl"
 
     logger "Filename : $FILENAME"
 
-    if [ "$2" == 'csv' ] ; then
-        logger "Exporting view to file csv"
-        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select * from $CSV_STAGING_VIEW ) to '${FILENAME}' WITH (FORMAT CSV, HEADER);"
-        PSQL_EXIT_CODE=$?
-    else
-        logger "Exporting view to file json"
-        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select response_jsonb from $JSON_STAGING_TABLE where response_jsonb is not null) to '${FILENAME}';"
-        PSQL_EXIT_CODE=$?
-    fi
+    logger "Exporting view to file json"
+    /usr/bin/psql "${DATABASE_URL}" -c "\copy (select response_jsonb from $JSON_STAGING_TABLE where response_jsonb is not null) to '${FILENAME}';"
+    PSQL_EXIT_CODE=$?
 
     if [[ $PSQL_EXIT_CODE -ne 0 ]] ; then
         logger "Error ${PSQL_EXIT_CODE} while running psql"
@@ -67,11 +54,9 @@ export_file() {
     logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
     logger "wc on $FILENAME: $(wc -l < """$FILENAME""") lines"
 
-    if [ "$2" == 'json' ] ; then
-        logger "Cleaning, fixing bad characters"
-        sed -i '/^\s*$/d' "$FILENAME"
-        sed -i 's:\\\\:\\:g' "$FILENAME"
-    fi
+    logger "Cleaning, fixing bad characters"
+    sed -i '/^\s*$/d' "$FILENAME"
+    sed -i 's:\\\\:\\:g' "$FILENAME"
 
     logger "Compressing"
     /bin/gzip -9 -c "$FILENAME" > "$FILENAME.gz"
@@ -114,8 +99,7 @@ logger "extracting possible changes for export"
     commit;
 SQL
 
-export_file export json
-export_file export csv
+export_file
 
 logger "updating last-exported dates"
 

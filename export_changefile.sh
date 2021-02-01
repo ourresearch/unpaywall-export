@@ -46,27 +46,14 @@ export_file() {
 
     PROCESS="export_with_versions"
     BUCKET="unpaywall-data-feed"
-    FILENAME="changed_dois_with_versions_${LAST_WEEK_FOR_FILE}_to_${TODAY_FOR_FILE}"
-    CSV_VIEW="export_main_changed_with_versions"
-
-    if [ "$2" == 'csv' ] ; then
-        FILENAME="${FILENAME}.csv"
-    else
-        FILENAME="${FILENAME}.jsonl"
-    fi
+    FILENAME="changed_dois_with_versions_${LAST_WEEK_FOR_FILE}_to_${TODAY_FOR_FILE}.jsonl"
 
     logger "Process  : $PROCESS"
     logger "Filename : $FILENAME"
 
-    if [ "$2" == 'csv' ] ; then
-        logger "Exporting view to file csv"
-        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select * from ${CSV_VIEW} where last_changed_date between '${LAST_WEEK_FOR_VIEW}'::timestamp and now() and updated > '1043-01-01'::timestamp) to '${FILENAME}' WITH (FORMAT CSV, HEADER);"
-        PSQL_EXIT_CODE=$?
-    else
-        logger "Exporting view to file json"
-        /usr/bin/psql "${DATABASE_URL}" -c "\copy (select response_jsonb from pub where response_jsonb is not null and last_changed_date between '${LAST_WEEK_FOR_VIEW}'::timestamp and now() and updated > '1043-01-01'::timestamp) to '${FILENAME}';"
-        PSQL_EXIT_CODE=$?
-    fi
+    logger "Exporting view to file json"
+    /usr/bin/psql "${DATABASE_URL}" -c "\copy (select response_jsonb from pub where response_jsonb is not null and last_changed_date between '${LAST_WEEK_FOR_VIEW}'::timestamp and now() and updated > '1043-01-01'::timestamp) to '${FILENAME}';"
+    PSQL_EXIT_CODE=$?
 
     if [[ $PSQL_EXIT_CODE -ne 0 ]] ; then
         logger "Error ${PSQL_EXIT_CODE} while running psql"
@@ -75,11 +62,9 @@ export_file() {
     logger "Created $FILENAME: $(stat -c%s """$FILENAME""") bytes"
     logger "wc on $FILENAME: $(wc -l < """$FILENAME""") lines"
 
-    if [ "$2" == 'json' ] ; then
-        logger "Cleaning, fixing bad characters"
-        sed -i '/^\s*$/d' "$FILENAME"
-        sed -i 's:\\\\:\\:g' "$FILENAME"
-    fi
+    logger "Cleaning, fixing bad characters"
+    sed -i '/^\s*$/d' "$FILENAME"
+    sed -i 's:\\\\:\\:g' "$FILENAME"
 
     logger "Compressing"
     /bin/gzip -9 -c "$FILENAME" > "$FILENAME.gz"
@@ -105,7 +90,6 @@ export_file() {
 }
 
 # export with version
-export_file export json
-export_file export csv
+export_file
 
 /usr/local/bin/heroku run -a oadoi python cache_changefile_dicts.py
