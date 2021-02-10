@@ -18,6 +18,7 @@ heroku --version
 UPDATE_WORKERS=$(heroku ps -a oadoi update | grep '^update\.' | wc -l)
 REFRESH_WORKERS=$(heroku ps -a articlepage refresh | grep '^refresh\.' | wc -l)
 REFRESH_AUX_WORKERS=$(heroku ps -a articlepage refresh_aux | grep '^refresh_aux\.' | wc -l)
+REFRESH_AUX_1_WORKERS=$(heroku ps -a articlepage refresh_aux_1 | grep '^refresh_aux_1\.' | wc -l)
 GREEN_SCRAPE_WORKERS=$(heroku ps -a oadoi green_scrape | grep '^green_scrape\.' | wc -l)
 REPO_HARVEST_WORKERS=$(heroku ps -a oadoi run_repo | grep '^run_repo\.' | wc -l)
 PDF_CHECK_WORKERS=$(heroku ps -a articlepage run_pdf_url_check | grep '^run_pdf_url_check\.' | wc -l)
@@ -25,6 +26,7 @@ PDF_CHECK_WORKERS=$(heroku ps -a articlepage run_pdf_url_check | grep '^run_pdf_
 heroku ps:scale update=0 --app=oadoi
 heroku ps:scale refresh=0 --app=articlepage
 heroku ps:scale refresh_aux=0 --app=articlepage
+heroku ps:scale refresh_aux_1=0 --app=articlepage
 heroku ps:scale green_scrape=0 --app=oadoi
 heroku ps:scale run_repo=0 --app=oadoi
 heroku ps:scale run_pdf_url_check=0 --app=articlepage
@@ -76,4 +78,5 @@ wait $update_vac $refresh_vac $pdf_check_vac
 
 heroku ps:scale refresh=$REFRESH_WORKERS --app=articlepage
 heroku ps:scale refresh_aux=$REFRESH_AUX_WORKERS --app=articlepage
+heroku ps:scale refresh_aux_1=$REFRESH_AUX_1_WORKERS --app=articlepage
 heroku ps:scale update=$UPDATE_WORKERS --app=oadoi
