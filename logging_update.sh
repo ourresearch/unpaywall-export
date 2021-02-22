@@ -27,7 +27,7 @@ psql $DATABASE_URL -c "\
             now() as time, \
             '2 days'::interval as interval, \
             (select count(1) from pub_queue where finished > now() - '2 days'::interval and started is null) as updated, \
-            (select count(1) from pub where last_changed_date > now() - '2 days'::interval) as changed \
+            (select count(1) from pub join pub_queue q using (id) where q.finished > now() - '2 days'::interval and last_changed_date > now() - '2 days'::interval) as changed \
     );"
 
 psql $DATABASE_URL -c "\
@@ -36,7 +36,7 @@ psql $DATABASE_URL -c "\
             now() as time, \
             '2 hours'::interval as interval, \
             (select count(1) from pub_queue where finished > now() - '2 hours'::interval and started is null) as updated, \
-            (select count(1) from pub where last_changed_date > now() - '2 hours'::interval) as changed \
+            (select count(1) from pub join pub_queue q using (id) where q.finished > now() - '2 hours'::interval and last_changed_date > now() - '2 hours'::interval) as changed \
     );"
 
 psql $DATABASE_URL -c "\
