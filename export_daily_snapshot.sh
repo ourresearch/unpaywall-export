@@ -70,7 +70,7 @@ logger "Created archive $FILENAME.gz: $(stat -c%s """$FILENAME.gz""") bytes"
 SNAPSHOT_BUCKET=unpaywall-daily-snapshots
 
 logger "Uploading snapshot to s3://${SNAPSHOT_BUCKET}"
-aws s3 cp $AWS_PROFILE_OPT "${FILENAME}.gz" "s3://${SNAPSHOT_BUCKET}/${FILENAME}.gz"
+aws s3 cp --no-progress $AWS_PROFILE_OPT "${FILENAME}.gz" "s3://${SNAPSHOT_BUCKET}/${FILENAME}.gz"
 S3CP_EXIT_CODE=$?
 if [[ $S3CP_EXIT_CODE -ne 0 ]] ; then
     logger "Error ${S3CP_EXIT_CODE} while uploading export"
