@@ -93,3 +93,5 @@ require_success $? 10 'bq'
 
 logger "delete local changefile $FILENAME"
 rm $FILENAME
+
+./bq_export_trailing_week_api_changes.sh
