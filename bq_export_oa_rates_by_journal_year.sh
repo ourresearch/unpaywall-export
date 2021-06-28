@@ -20,7 +20,7 @@ bq query \
         select * from (
             select journal_issn_l as issn_l, year, oa_status, count(1) as num_dois
             from unpaywall.api_live
-            where published_date <= current_date() group by 1, 2, 3
+            where cast(year as integer) <= extract(year from current_date()) group by 1, 2, 3
         )
         where issn_l is not null and year is not null and oa_status is not null;
 BQ_SQL
