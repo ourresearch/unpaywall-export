@@ -43,7 +43,7 @@ logger "Process  : $PROCESS"
 logger "Filename : $FILENAME"
 
 logger "Exporting database column to file"
-/usr/bin/psql "${DATABASE_URL}?ssl=true" -c "\copy (select response_jsonb from pub where response_jsonb is not null) to '${FILENAME}';"
+/usr/bin/psql "${DATABASE_URL}?ssl=true" -c "\copy (select response_jsonb from pub where response_jsonb is not null and response_jsonb->>'oa_status' is not null) to '${FILENAME}';"
 PSQL_EXIT_CODE=$?
 
 if [[ $PSQL_EXIT_CODE -ne 0 ]] ; then
