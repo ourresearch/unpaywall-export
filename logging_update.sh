@@ -27,7 +27,7 @@ psql $DATABASE_URL -c "\
     ) ( \
         select now(), oa_status_before, oa_status_after, count(distinct id) as num_dois \
         from pub_refresh_result \
-        where refresh_time >= now() - interval '8 hours' \
+        where refresh_time >= now() - interval '8 hours' and oa_status_before is not null and oa_status_after is not null \
         group by 1, 2, 3 \
     );"
 
