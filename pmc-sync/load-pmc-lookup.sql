@@ -1,13 +1,13 @@
-create table tmp_pmcid_lookup (like pmcid_lookup including all);
+create temp table tmp_pmcid_lookup (like pmcid_lookup);
 \copy tmp_pmcid_lookup (doi, pmcid, release_date) from _CSV_FILE_ csv header
 
 update tmp_pmcid_lookup set doi = lower(doi), pmcid = lower(pmcid);
 
 begin;
-
-drop table pmcid_lookup;
-alter table tmp_pmcid_lookup rename to pmcid_lookup;
-
+delete from pmcid_lookup;
+insert into pmcid_lookup (doi, pmcid, release_date) (
+    select doi, pmcid, release_date from tmp_pmcid_lookup
+);
 commit;
 
 --create temp table tmp_published_date as (
