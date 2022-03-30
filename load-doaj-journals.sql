@@ -9,10 +9,11 @@ create temp table doaj_csv (
     alt_title   text,
     issn        text,
     e_issn      text,
+    year        integer,
     license     text
 );
 
-\copy doaj_csv (title, alt_title, issn, e_issn, license) from program 'bash get-doaj-csv.sh' csv header null as ''
+\copy doaj_csv (title, alt_title, issn, e_issn, year, license) from program 'bash get-doaj-csv.sh' csv header null as ''
 
 begin;
 
@@ -21,6 +22,7 @@ update
 set
     title = doaj_csv.title,
     alt_title = doaj_csv.alt_title,
+    year = doaj_csv.year,
     license = doaj_csv.license
 from
     doaj_csv
@@ -40,7 +42,7 @@ insert into doaj_journals (title, alt_title, issn, e_issn, year, license) (
         alt_title,
         issn,
         e_issn,
-        extract(year from now()),
+        year,
         license
     from
         doaj_csv
