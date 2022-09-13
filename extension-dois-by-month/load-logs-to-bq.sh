@@ -34,7 +34,7 @@ log_date=$1
 
 if [ -z "$log_date" ]; then
     logger "No date specified, picking the earliest unpopulated day."
-    min_log_date=$(date --utc --date='364 days ago' +'%Y-%m-%d')
+    min_log_date=$(date --utc --date='2019-01-01' +'%Y-%m-%d')
     max_log_date=$(date --utc --date='2 days ago' +'%Y-%m-%d')
     log_date=$(
         bq query --use_legacy_sql=false --format=prettyjson --quiet \
