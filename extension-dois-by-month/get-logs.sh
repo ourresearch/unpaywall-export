@@ -8,6 +8,6 @@ day=$1
 work_dir=$(mktemp -d)
 
 ./generate-hours.sh $day \
-    | parallel -j 25% "./papertrail-log-download.sh {} $work_dir"
+    | parallel -j 25% "./s3-log-download.sh {} $work_dir"
 
 cat $work_dir/*
