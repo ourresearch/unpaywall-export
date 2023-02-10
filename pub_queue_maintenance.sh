@@ -15,6 +15,10 @@ alias heroku="/usr/local/bin/heroku"
 # check we have the needed heroku
 heroku --version
 
+psql $DATABASE_URL -c "update recordthresher.doi_record_queue set started = null where started < now() - interval '8 hours';"
+psql $DATABASE_URL -c "update recordthresher.pubmed_record_queue set started = null where started < now() - interval '8 hours';"
+psql $DATABASE_URL -c "update recordthresher.pmh_record_queue set started = null where started < now() - interval '8 hours';"
+
 UPDATE_WORKERS=$(heroku ps -a oadoi update | grep '^update\.' | wc -l)
 REFRESH_WORKERS=$(heroku ps -a articlepage refresh | grep '^refresh\.' | wc -l)
 REFRESH_AUX_WORKERS=$(heroku ps -a articlepage refresh_aux | grep '^refresh_aux\.' | wc -l)
