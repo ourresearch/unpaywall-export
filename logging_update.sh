@@ -9,8 +9,6 @@ echo "refresh materialized views for metrics";
 ./logging/log-version-rates.sh
 ./logging/log-crawlera-stats.sh
 
-/usr/local/bin/heroku run -a oadoi python -m monitoring.data_feed
-
 psql $DATABASE_URL < log-green-scrape-stats.sql
 psql $DATABASE_URL < log-hybrid-scrape-stats.sql
 psql $DATABASE_URL < logging/changefile-size.sql
